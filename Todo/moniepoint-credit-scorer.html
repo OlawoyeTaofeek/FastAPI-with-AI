@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Merchant Intelligence · Moniepoint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,300&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0f0d0a;
+  --ink2:#2a2520;
+  --ink3:#4a443c;
+  --mist:#f5f2ed;
+  --mist2:#ede8e0;
+  --mist3:#e0d9ce;
+  --cream:#faf8f4;
+  --mp-green:#00a651;
+  --mp-green-dim:rgba(0,166,81,0.1);
+  --mp-green-mid:rgba(0,166,81,0.25);
+  --amber:#d97706;
+  --amber-dim:rgba(217,119,6,0.1);
+  --red:#dc2626;
+  --red-dim:rgba(220,38,38,0.08);
+  --blue:#1d4ed8;
+  --blue-dim:rgba(29,78,216,0.08);
+  --gold:#b45309;
+  --border:rgba(15,13,10,0.1);
+  --border2:rgba(15,13,10,0.18);
+  --shadow:0 2px 20px rgba(15,13,10,0.08);
+  --shadow2:0 8px 40px rgba(15,13,10,0.12);
+  --r:10px;
+  --r2:16px;
+  --ff-display:'Fraunces',serif;
+  --ff-mono:'IBM Plex Mono',monospace;
+  --ff-body:'Instrument Sans',sans-serif;
+}
+
+body{
+  background:var(--cream);
+  color:var(--ink);
+  font-family:var(--ff-body);
+  font-size:14px;
+  line-height:1.6;
+  min-height:100vh;
+}
+
+/* Grain overlay */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:999;opacity:.6;
+}
+
+/* ── Header ─────────────────────────── */
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 40px;
+  background:white;
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:100;
+}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-mark{
+  width:36px;height:36px;
+  background:var(--mp-green);
+  border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+}
+.logo-mark svg{width:20px;height:20px;fill:white}
+.logo-name{font-family:var(--ff-display);font-size:18px;font-weight:700;color:var(--ink);letter-spacing:-.3px}
+.logo-name span{color:var(--mp-green)}
+.header-badge{
+  font-family:var(--ff-mono);font-size:10px;font-weight:600;
+  background:var(--mp-green-dim);color:var(--mp-green);
+  padding:4px 10px;border-radius:20px;letter-spacing:.5px;
+  border:1px solid var(--mp-green-mid);
+}
+
+/* ── Main layout ─────────────────────── */
+.shell{display:flex;min-height:calc(100vh - 69px)}
+
+/* ── Sidebar ─────────────────────────── */
+.sidebar{
+  width:300px;flex-shrink:0;
+  background:white;
+  border-right:1px solid var(--border);
+  padding:28px 0;
+  overflow-y:auto;
+}
+.sidebar-section{padding:0 24px;margin-bottom:28px}
+.sidebar-label{
+  font-family:var(--ff-mono);font-size:10px;font-weight:600;
+  color:var(--ink3);text-transform:uppercase;letter-spacing:1px;
+  margin-bottom:12px;
+}
+.merchant-card{
+  background:var(--mist);
+  border:1px solid var(--border);
+  border-radius:var(--r2);
+  padding:18px;
+  cursor:pointer;
+  transition:all .2s;
+  margin-bottom:10px;
+  position:relative;
+  overflow:hidden;
+}
+.merchant-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--mist3);transition:background .2s;
+}
+.merchant-card:hover{border-color:var(--border2);background:var(--mist2)}
+.merchant-card.active{background:white;border-color:var(--mp-green);box-shadow:0 0 0 3px var(--mp-green-dim)}
+.merchant-card.active::before{background:var(--mp-green)}
+.mc-name{font-weight:600;font-size:14px;color:var(--ink);margin-bottom:2px}
+.mc-type{font-size:12px;color:var(--ink3)}
+.mc-score-row{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+.mc-score{font-family:var(--ff-mono);font-size:20px;font-weight:600}
+.mc-score.good{color:var(--mp-green)}
+.mc-score.fair{color:var(--amber)}
+.mc-score.poor{color:var(--red)}
+.mc-label{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px}
+.mc-label.good{background:var(--mp-green-dim);color:var(--mp-green)}
+.mc-label.fair{background:var(--amber-dim);color:var(--amber)}
+.mc-label.poor{background:var(--red-dim);color:var(--red)}
+
+/* ── Main content ─────────────────────── */
+.main{flex:1;padding:40px;overflow-y:auto}
+.page-header{margin-bottom:32px}
+.page-title{
+  font-family:var(--ff-display);font-size:36px;font-weight:700;
+  color:var(--ink);line-height:1.15;letter-spacing:-.5px;
+  margin-bottom:6px;
+}
+.page-sub{font-size:15px;color:var(--ink3);font-weight:400}
+
+/* ── Score ring + hero ─────────────────── */
+.hero-grid{display:grid;grid-template-columns:auto 1fr;gap:32px;align-items:start;margin-bottom:32px}
+.score-ring-wrap{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:var(--r2);
+  padding:32px;
+  display:flex;flex-direction:column;align-items:center;
+  width:280px;
+  box-shadow:var(--shadow);
+}
+.ring-title{font-family:var(--ff-mono);font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:20px}
+.ring-container{position:relative;width:180px;height:180px;margin-bottom:20px}
+.ring-svg{width:180px;height:180px;transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:var(--mist2);stroke-width:14}
+.ring-fill{fill:none;stroke-width:14;stroke-linecap:round;transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1),stroke 0.4s}
+.ring-center{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;
+}
+.ring-score{font-family:var(--ff-display);font-size:46px;font-weight:700;line-height:1}
+.ring-denom{font-family:var(--ff-mono);font-size:12px;color:var(--ink3);margin-top:2px}
+.ring-verdict{
+  font-family:var(--ff-mono);font-size:13px;font-weight:600;
+  padding:6px 18px;border-radius:20px;letter-spacing:.3px;
+}
+.ring-verdict.good{background:var(--mp-green-dim);color:var(--mp-green);border:1px solid var(--mp-green-mid)}
+.ring-verdict.fair{background:var(--amber-dim);color:var(--amber)}
+.ring-verdict.poor{background:var(--red-dim);color:var(--red)}
+.ring-updated{font-size:11px;color:var(--ink3);margin-top:10px}
+
+/* ── Metric cards row ─────────────────── */
+.metrics-col{display:flex;flex-direction:column;gap:16px}
+.metrics-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.metric-card{
+  background:white;border:1px solid var(--border);
+  border-radius:var(--r2);padding:20px;
+  box-shadow:var(--shadow);
+}
+.metric-icon{font-size:22px;margin-bottom:10px}
+.metric-label{font-family:var(--ff-mono);font-size:10px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.metric-value{font-family:var(--ff-display);font-size:24px;font-weight:700;color:var(--ink);line-height:1}
+.metric-sub{font-size:12px;color:var(--ink3);margin-top:4px}
+
+/* Revenue trend bar */
+.trend-card{
+  background:white;border:1px solid var(--border);
+  border-radius:var(--r2);padding:20px;
+  box-shadow:var(--shadow);
+}
+.trend-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.trend-title{font-size:13px;font-weight:600;color:var(--ink)}
+.bars-wrap{display:flex;align-items:flex-end;gap:5px;height:60px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{
+  width:100%;border-radius:4px 4px 0 0;
+  transition:height 1s cubic-bezier(.4,0,.2,1);
+  min-height:4px;
+}
+.bar-label{font-family:var(--ff-mono);font-size:9px;color:var(--ink3)}
+
+/* ── Signal grid ─────────────────────── */
+.signals-section{margin-bottom:32px}
+.section-title{
+  font-family:var(--ff-display);font-size:22px;font-weight:700;
+  color:var(--ink);margin-bottom:4px;letter-spacing:-.3px;
+}
+.section-sub{font-size:13px;color:var(--ink3);margin-bottom:20px}
+.signals-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.signal-card{
+  background:white;border:1px solid var(--border);
+  border-radius:var(--r2);padding:20px;
+  box-shadow:var(--shadow);
+}
+.signal-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.signal-name{font-size:13px;font-weight:600;color:var(--ink)}
+.signal-score-pill{
+  font-family:var(--ff-mono);font-size:12px;font-weight:600;
+  padding:3px 10px;border-radius:10px;
+}
+.signal-score-pill.good{background:var(--mp-green-dim);color:var(--mp-green)}
+.signal-score-pill.fair{background:var(--amber-dim);color:var(--amber)}
+.signal-score-pill.poor{background:var(--red-dim);color:var(--red)}
+.signal-bar-bg{background:var(--mist2);border-radius:4px;height:6px;margin-bottom:10px}
+.signal-bar-fill{height:6px;border-radius:4px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.signal-desc{font-size:12px;color:var(--ink3);line-height:1.5}
+
+/* ── AI insight panel ─────────────────── */
+.ai-section{margin-bottom:32px}
+.ai-panel{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:var(--r2);
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.ai-header{
+  background:var(--ink);
+  padding:18px 24px;
+  display:flex;align-items:center;gap:12px;
+}
+.ai-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--mp-green);
+  box-shadow:0 0 8px var(--mp-green);
+  animation:pulse 2s ease infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 8px var(--mp-green)}50%{opacity:.6;box-shadow:0 0 4px var(--mp-green)}}
+.ai-header-text{font-family:var(--ff-mono);font-size:12px;font-weight:600;color:white;letter-spacing:.5px}
+.ai-header-sub{font-size:11px;color:rgba(255,255,255,0.45);margin-left:auto;font-family:var(--ff-mono)}
+.ai-body{padding:28px}
+.ai-output{
+  font-size:15px;color:var(--ink2);line-height:1.75;
+  min-height:120px;
+}
+.ai-output.loading{display:flex;align-items:center;gap:8px;color:var(--ink3)}
+.typing-dots span{
+  display:inline-block;width:5px;height:5px;border-radius:50%;
+  background:var(--mp-green);margin:0 2px;
+  animation:dot-bounce .9s ease infinite;
+}
+.typing-dots span:nth-child(2){animation-delay:.15s}
+.typing-dots span:nth-child(3){animation-delay:.3s}
+@keyframes dot-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.ai-actions{display:flex;gap:10px;margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
+.ai-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 20px;border-radius:var(--r);
+  font-family:var(--ff-body);font-size:13px;font-weight:600;
+  cursor:pointer;border:none;transition:all .2s;
+}
+.ai-btn-primary{background:var(--mp-green);color:white}
+.ai-btn-primary:hover{background:#009348;transform:translateY(-1px);box-shadow:0 4px 16px var(--mp-green-mid)}
+.ai-btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.ai-btn-ghost{background:var(--mist);color:var(--ink);border:1px solid var(--border2)}
+.ai-btn-ghost:hover{background:var(--mist2)}
+
+/* Highlight tags in AI output */
+.tag-green{background:var(--mp-green-dim);color:var(--mp-green);padding:1px 7px;border-radius:5px;font-weight:600;font-size:13px}
+.tag-amber{background:var(--amber-dim);color:var(--amber);padding:1px 7px;border-radius:5px;font-weight:600;font-size:13px}
+.tag-red{background:var(--red-dim);color:var(--red);padding:1px 7px;border-radius:5px;font-weight:600;font-size:13px}
+
+/* Recommendations */
+.recs-section{margin-bottom:32px}
+.rec-list{display:flex;flex-direction:column;gap:12px}
+.rec-item{
+  background:white;border:1px solid var(--border);
+  border-radius:var(--r2);padding:18px 20px;
+  display:flex;align-items:flex-start;gap:16px;
+  box-shadow:var(--shadow);
+}
+.rec-num{
+  font-family:var(--ff-mono);font-size:13px;font-weight:600;
+  color:white;background:var(--ink);
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;
+}
+.rec-body{}
+.rec-title{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.rec-desc{font-size:13px;color:var(--ink3);line-height:1.5}
+.rec-impact{font-family:var(--ff-mono);font-size:11px;color:var(--mp-green);font-weight:600;margin-top:6px}
+
+/* Error state */
+.api-error{
+  background:var(--red-dim);border:1px solid rgba(220,38,38,.2);
+  border-radius:var(--r);padding:14px 18px;
+  font-size:13px;color:var(--red);margin-top:12px;
+  display:none;
+}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.fade-up{animation:fadeUp .5s ease both}
+.fu1{animation-delay:.05s}
+.fu2{animation-delay:.1s}
+.fu3{animation-delay:.15s}
+.fu4{animation-delay:.2s}
+.fu5{animation-delay:.25s}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--mist3);border-radius:3px}
+
+/* Responsive tweak */
+@media(max-width:1100px){
+  .metrics-row{grid-template-columns:1fr 1fr}
+  .hero-grid{grid-template-columns:1fr;gap:20px}
+  .score-ring-wrap{width:100%;flex-direction:row;padding:24px;align-items:center;gap:28px}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+    <div>
+      <div class="logo-name">Monie<span>point</span></div>
+    </div>
+  </div>
+  <div class="header-badge">MERCHANT INTELLIGENCE · DEMO</div>
+</header>
+
+<div class="shell">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Merchant Profiles</div>
+      <div id="merchant-list"></div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main" id="main-content">
+    <div class="page-header fade-up">
+      <div class="page-title" id="merchant-name">Select a merchant</div>
+      <div class="page-sub" id="merchant-meta">Choose a merchant from the sidebar to view their credit intelligence report.</div>
+    </div>
+
+    <div id="dashboard" style="display:none">
+      <!-- Hero grid -->
+      <div class="hero-grid fade-up fu1">
+        <!-- Score ring -->
+        <div class="score-ring-wrap">
+          <div class="ring-title">Credit Score</div>
+          <div class="ring-container">
+            <svg class="ring-svg" viewBox="0 0 180 180">
+              <circle class="ring-bg" cx="90" cy="90" r="76"/>
+              <circle class="ring-fill" id="ring-fill" cx="90" cy="90" r="76"/>
+            </svg>
+            <div class="ring-center">
+              <div class="ring-score" id="ring-score-val">—</div>
+              <div class="ring-denom">/ 100</div>
+            </div>
+          </div>
+          <div class="ring-verdict" id="ring-verdict">—</div>
+          <div class="ring-updated">Updated today · Behavioral model v2</div>
+        </div>
+
+        <!-- Metrics col -->
+        <div class="metrics-col">
+          <div class="metrics-row">
+            <div class="metric-card fade-up fu2">
+              <div class="metric-icon">💰</div>
+              <div class="metric-label">Monthly Revenue</div>
+              <div class="metric-value" id="m-revenue">—</div>
+              <div class="metric-sub" id="m-revenue-sub">avg. last 6 months</div>
+            </div>
+            <div class="metric-card fade-up fu3">
+              <div class="metric-icon">📅</div>
+              <div class="metric-label">Active Days / Mo</div>
+              <div class="metric-value" id="m-active">—</div>
+              <div class="metric-sub" id="m-active-sub">out of 30 days</div>
+            </div>
+            <div class="metric-card fade-up fu4">
+              <div class="metric-icon">🔁</div>
+              <div class="metric-label">Repeat Customers</div>
+              <div class="metric-value" id="m-repeat">—</div>
+              <div class="metric-sub">est. from txn patterns</div>
+            </div>
+          </div>
+
+          <!-- Revenue trend bars -->
+          <div class="trend-card fade-up fu5">
+            <div class="trend-header">
+              <div class="trend-title">6-Month Revenue Trend (₦'000)</div>
+              <div style="font-family:var(--ff-mono);font-size:11px;color:var(--ink3)" id="trend-direction">—</div>
+            </div>
+            <div class="bars-wrap" id="trend-bars"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Signals -->
+      <div class="signals-section">
+        <div class="section-title">Behavioral Signals</div>
+        <div class="section-sub">6 key indicators used to compute the credit score</div>
+        <div class="signals-grid" id="signals-grid"></div>
+      </div>
+
+      <!-- AI Insight -->
+      <div class="ai-section">
+        <div class="section-title">AI Credit Analysis</div>
+        <div class="section-sub">Powered by Claude · Moniepoint Merchant Intelligence</div>
+        <div class="ai-panel">
+          <div class="ai-header">
+            <div class="ai-dot"></div>
+            <div class="ai-header-text">CLAUDE · CREDIT ANALYST</div>
+            <div class="ai-header-sub" id="ai-model-tag">claude-sonnet-4</div>
+          </div>
+          <div class="ai-body">
+            <div class="ai-output" id="ai-output">
+              <div class="loading" style="color:var(--ink3);font-size:14px">Click <strong>"Generate Analysis"</strong> to get an AI-powered credit report for this merchant.</div>
+            </div>
+            <div class="api-error" id="api-error">⚠️ Could not reach the Claude API. Make sure this file is served through the Claude.ai artifact environment, or check your network.</div>
+            <div class="ai-actions">
+              <button class="ai-btn ai-btn-primary" id="analyze-btn" onclick="generateAnalysis()">✦ Generate Analysis</button>
+              <button class="ai-btn ai-btn-ghost" onclick="generateAnalysis()">↺ Refresh</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recommendations -->
+      <div class="recs-section" id="recs-section" style="display:none">
+        <div class="section-title">Credit Improvement Roadmap</div>
+        <div class="section-sub">Actionable steps to increase this merchant's credit score</div>
+        <div class="rec-list" id="rec-list"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ── Merchant data ────────────────────────────────────────────────────
+const MERCHANTS = [
+  {
+    id: 1,
+    name: "Mama Titi's Kitchen",
+    type: "Food & Beverage · Lagos Island",
+    score: 78,
+    grade: "good",
+    monthlyRevenue: "₦312,000",
+    activeDays: 26,
+    repeatRate: "64%",
+    trend: [210, 245, 280, 295, 310, 312],
+    trendDir: "↑ +48% over 6 months",
+    signals: [
+      { name: "Revenue Consistency", score: 82, grade: "good", width: 82, desc: "Revenue variance is low at 8.3% month-over-month. Stable cash flow with predictable inflow patterns." },
+      { name: "Transaction Frequency", score: 88, grade: "good", width: 88, desc: "Averages 34 transactions per active day. High frequency signals strong customer demand." },
+      { name: "Business Tenure", score: 90, grade: "good", width: 90, desc: "Active on Moniepoint for 22 months. Long-standing merchants show lower default risk." },
+      { name: "Cash Flow Coverage", score: 74, grade: "good", width: 74, desc: "Estimated 2.1× loan coverage ratio based on average monthly inflow vs likely repayment obligation." },
+      { name: "Seasonal Resilience", score: 60, grade: "fair", width: 60, desc: "Revenue drops ~28% in January and July. Moderate exposure to seasonal demand swings." },
+      { name: "Weekend Revenue Mix", score: 70, grade: "fair", width: 70, desc: "42% of revenue comes on weekends. Slight concentration risk if weekend footfall declines." }
+    ],
+    recs: [
+      { title: "Diversify to weekday lunch trade", desc: "Consider a weekday express menu to reduce weekend revenue concentration and smooth cash flow.", impact: "+4–6 pts" },
+      { title: "Build a December buffer", desc: "Set aside 15% of October–November revenue to cover January slow period and avoid cash gaps.", impact: "+3–5 pts" },
+      { title: "Enable Moniepoint savings", desc: "Activating a business savings wallet improves the cash buffer signal used in credit modelling.", impact: "+2–4 pts" }
+    ]
+  },
+  {
+    id: 2,
+    name: "Segun Auto Parts",
+    type: "Retail Hardware · Mushin, Lagos",
+    score: 54,
+    grade: "fair",
+    monthlyRevenue: "₦187,000",
+    activeDays: 20,
+    repeatRate: "38%",
+    trend: [195, 170, 160, 180, 175, 187],
+    trendDir: "→ Flat · ±5% variance",
+    signals: [
+      { name: "Revenue Consistency", score: 48, grade: "poor", width: 48, desc: "Revenue has varied by up to 18% month-over-month. Inconsistent cash flow raises repayment risk." },
+      { name: "Transaction Frequency", score: 55, grade: "fair", width: 55, desc: "Averages 12 transactions per active day — lower than peer group median of 22." },
+      { name: "Business Tenure", score: 75, grade: "good", width: 75, desc: "Active for 14 months on Moniepoint. Reasonable track record in the platform ecosystem." },
+      { name: "Cash Flow Coverage", score: 52, grade: "fair", width: 52, desc: "Coverage ratio estimated at 1.4×. Acceptable but leaves thin margin for unexpected costs." },
+      { name: "Seasonal Resilience", score: 40, grade: "poor", width: 40, desc: "Revenue dropped 35% in Q1 2024. High sensitivity to economic cycles affecting auto maintenance spend." },
+      { name: "Weekend Revenue Mix", score: 55, grade: "fair", width: 55, desc: "Revenue is well-spread across the week, though absolute volumes on slower days are thin." }
+    ],
+    recs: [
+      { title: "Increase daily transaction volume", desc: "Offer bundled service packages (e.g. 3-item discounts) to grow average daily transaction count toward peer group levels.", impact: "+6–8 pts" },
+      { title: "Grow repeat customer base", desc: "A 10% increase in repeat customers measurably reduces revenue volatility. Simple loyalty tracking helps.", impact: "+5–7 pts" },
+      { title: "Maintain consistent operating days", desc: "Closing 10+ days a month signals instability. Even low-volume days contribute positively to the consistency signal.", impact: "+4–5 pts" }
+    ]
+  },
+  {
+    id: 3,
+    name: "Adaeze Beauty Hub",
+    type: "Beauty & Wellness · Abuja",
+    score: 88,
+    grade: "good",
+    monthlyRevenue: "₦540,000",
+    activeDays: 28,
+    repeatRate: "79%",
+    trend: [400, 430, 470, 500, 520, 540],
+    trendDir: "↑ +35% growth trajectory",
+    signals: [
+      { name: "Revenue Consistency", score: 91, grade: "good", width: 91, desc: "Exceptionally stable — only 4.1% month-over-month variance. Top 10% of merchant cohort." },
+      { name: "Transaction Frequency", score: 86, grade: "good", width: 86, desc: "38 transactions per active day. High throughput suggests strong brand loyalty and referral base." },
+      { name: "Business Tenure", score: 95, grade: "good", width: 95, desc: "32 months on platform. One of the longest-tenured merchants in the beauty vertical." },
+      { name: "Cash Flow Coverage", score: 90, grade: "good", width: 90, desc: "Estimated 3.2× coverage ratio. Strong ability to service a medium-term business loan." },
+      { name: "Seasonal Resilience", score: 82, grade: "good", width: 82, desc: "Revenue holds well in slow months. December spike (+22%) further de-risks the profile." },
+      { name: "Weekend Revenue Mix", score: 84, grade: "good", width: 84, desc: "55% weekend revenue is appropriate for the beauty segment. Risk is well-compensated by high overall consistency." }
+    ],
+    recs: [
+      { title: "Apply for a Moniepoint Business Loan", desc: "This profile qualifies for a ₦1.5M–₦3M facility at competitive rates. Revenue trajectory supports an expansion case.", impact: "Unlock growth capital" },
+      { title: "Add a second operator or branch", desc: "Revenue growth is capping on capacity. Adding staff or a second location could double addressable customers.", impact: "Revenue diversification" },
+      { title: "Enroll in Moniepoint payroll", desc: "Managing staff payments through Moniepoint further deepens the data relationship and may improve future credit limits.", impact: "+2–3 pts" }
+    ]
+  },
+  {
+    id: 4,
+    name: "Emeka's Phone Repairs",
+    type: "Electronics Services · Port Harcourt",
+    score: 31,
+    grade: "poor",
+    monthlyRevenue: "₦68,000",
+    activeDays: 14,
+    repeatRate: "22%",
+    trend: [90, 75, 60, 72, 65, 68],
+    trendDir: "↓ −24% declining trend",
+    signals: [
+      { name: "Revenue Consistency", score: 28, grade: "poor", width: 28, desc: "Revenue fluctuates by up to 30% monthly. Highly unpredictable cash flow — significant repayment risk." },
+      { name: "Transaction Frequency", score: 35, grade: "poor", width: 35, desc: "Only 6–8 transactions per active day. Well below sector median, suggesting low customer volume." },
+      { name: "Business Tenure", score: 40, grade: "poor", width: 40, desc: "Active for 8 months. Short track record limits the model's ability to assess long-term stability." },
+      { name: "Cash Flow Coverage", score: 30, grade: "poor", width: 30, desc: "Coverage ratio estimated at 0.9×. Revenue is unlikely to comfortably cover a typical loan repayment schedule." },
+      { name: "Seasonal Resilience", score: 22, grade: "poor", width: 22, desc: "Severe Q1 and Q3 dips. Revenue pattern is highly volatile and hard to project forward." },
+      { name: "Weekend Revenue Mix", score: 32, grade: "poor", width: 32, desc: "Only 18% of revenue falls on weekdays — unusual for a repairs business and suggests irregular hours." }
+    ],
+    recs: [
+      { title: "Operate more consistently — target 24+ days/month", desc: "The single biggest score lever. Consistent presence signals reliability and builds the data trail lenders rely on.", impact: "+10–14 pts" },
+      { title: "Expand service offerings", desc: "Adding accessories sales or screen protectors creates lower-ticket, higher-frequency transactions — improving the consistency signal.", impact: "+6–8 pts" },
+      { title: "Build 6+ months of transaction history", desc: "At 8 months, the model has limited data. Simply continuing to trade will improve the tenure and consistency scores over time.", impact: "+8–12 pts over 6 months" }
+    ]
+  }
+];
+
+// ── State ─────────────────────────────────────────────────────────────
+let activeMerchant = null;
+
+// ── Render sidebar ────────────────────────────────────────────────────
+function renderSidebar() {
+  const list = document.getElementById('merchant-list');
+  list.innerHTML = MERCHANTS.map(m => `
+    <div class="merchant-card ${m.grade}" onclick="selectMerchant(${m.id})" id="mc-${m.id}">
+      <div class="mc-name">${m.name}</div>
+      <div class="mc-type">${m.type}</div>
+      <div class="mc-score-row">
+        <div class="mc-score ${m.grade}">${m.score}</div>
+        <div class="mc-label ${m.grade}">${m.grade === 'good' ? 'Eligible' : m.grade === 'fair' ? 'Review' : 'High Risk'}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Select merchant ───────────────────────────────────────────────────
+function selectMerchant(id) {
+  activeMerchant = MERCHANTS.find(m => m.id === id);
+  if (!activeMerchant) return;
+
+  // Sidebar active state
+  document.querySelectorAll('.merchant-card').forEach(el => el.classList.remove('active'));
+  document.getElementById(`mc-${id}`).classList.add('active');
+
+  // Header
+  document.getElementById('merchant-name').textContent = activeMerchant.name;
+  document.getElementById('merchant-meta').textContent = activeMerchant.type + ' · Moniepoint Business Account';
+
+  // Show dashboard
+  document.getElementById('dashboard').style.display = 'block';
+
+  // Render ring
+  renderRing(activeMerchant.score, activeMerchant.grade);
+
+  // Metrics
+  document.getElementById('m-revenue').textContent = activeMerchant.monthlyRevenue;
+  document.getElementById('m-active').textContent = activeMerchant.activeDays;
+  document.getElementById('m-repeat').textContent = activeMerchant.repeatRate;
+  document.getElementById('trend-direction').textContent = activeMerchant.trendDir;
+
+  // Trend bars
+  renderTrendBars(activeMerchant.trend, activeMerchant.grade);
+
+  // Signals
+  renderSignals(activeMerchant.signals);
+
+  // Reset AI panel
+  document.getElementById('ai-output').innerHTML = '<div style="color:var(--ink3);font-size:14px">Click <strong>"Generate Analysis"</strong> to get an AI-powered credit report for this merchant.</div>';
+  document.getElementById('api-error').style.display = 'none';
+  document.getElementById('analyze-btn').disabled = false;
+
+  // Recs
+  document.getElementById('recs-section').style.display = 'none';
+  renderRecs(activeMerchant.recs);
+}
+
+// ── Ring ──────────────────────────────────────────────────────────────
+function renderRing(score, grade) {
+  const r = 76;
+  const circ = 2 * Math.PI * r;
+  const fill = document.getElementById('ring-fill');
+  const offset = circ - (score / 100) * circ;
+
+  const colors = { good: '#00a651', fair: '#d97706', poor: '#dc2626' };
+  fill.style.stroke = colors[grade];
+  fill.style.strokeDasharray = circ;
+  fill.style.strokeDashoffset = circ; // start at 0
+
+  setTimeout(() => { fill.style.strokeDashoffset = offset; }, 100);
+
+  document.getElementById('ring-score-val').textContent = score;
+  document.getElementById('ring-score-val').style.color = colors[grade];
+
+  const v = document.getElementById('ring-verdict');
+  v.className = `ring-verdict ${grade}`;
+  v.textContent = grade === 'good' ? '✓ Credit Eligible' : grade === 'fair' ? '⚡ Needs Review' : '✕ High Risk';
+}
+
+// ── Trend bars ────────────────────────────────────────────────────────
+function renderTrendBars(data, grade) {
+  const months = ['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr'];
+  const max = Math.max(...data);
+  const colors = { good: '#00a651', fair: '#d97706', poor: '#dc2626' };
+  const container = document.getElementById('trend-bars');
+
+  container.innerHTML = data.map((v, i) => {
+    const pct = (v / max) * 100;
+    return `
+      <div class="bar-col">
+        <div class="bar" style="height:0%;background:${colors[grade]};opacity:${0.4 + (i/data.length)*0.6}" id="bar-${i}"></div>
+        <div class="bar-label">${months[i]}</div>
+      </div>
+    `;
+  }).join('');
+
+  // Animate bars
+  setTimeout(() => {
+    data.forEach((v, i) => {
+      const pct = (v / max) * 56;
+      const el = document.getElementById(`bar-${i}`);
+      if (el) el.style.height = pct + 'px';
+    });
+  }, 200);
+}
+
+// ── Signals ───────────────────────────────────────────────────────────
+function renderSignals(signals) {
+  const colors = { good: '#00a651', fair: '#d97706', poor: '#dc2626' };
+  document.getElementById('signals-grid').innerHTML = signals.map(s => `
+    <div class="signal-card">
+      <div class="signal-top">
+        <div class="signal-name">${s.name}</div>
+        <div class="signal-score-pill ${s.grade}">${s.score}/100</div>
+      </div>
+      <div class="signal-bar-bg">
+        <div class="signal-bar-fill" style="width:0%;background:${colors[s.grade]}" data-width="${s.width}"></div>
+      </div>
+      <div class="signal-desc">${s.desc}</div>
+    </div>
+  `).join('');
+
+  setTimeout(() => {
+    document.querySelectorAll('.signal-bar-fill').forEach(el => {
+      el.style.width = el.dataset.width + '%';
+    });
+  }, 200);
+}
+
+// ── Recs ──────────────────────────────────────────────────────────────
+function renderRecs(recs) {
+  document.getElementById('rec-list').innerHTML = recs.map((r, i) => `
+    <div class="rec-item">
+      <div class="rec-num">${i + 1}</div>
+      <div class="rec-body">
+        <div class="rec-title">${r.title}</div>
+        <div class="rec-desc">${r.desc}</div>
+        <div class="rec-impact">Expected impact: ${r.impact}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── AI Analysis ───────────────────────────────────────────────────────
+async function generateAnalysis() {
+  if (!activeMerchant) return;
+  const btn = document.getElementById('analyze-btn');
+  const output = document.getElementById('ai-output');
+  const errEl = document.getElementById('api-error');
+
+  btn.disabled = true;
+  errEl.style.display = 'none';
+  output.innerHTML = `
+    <div class="ai-output loading">
+      Analysing merchant data
+      <div class="typing-dots"><span></span><span></span><span></span></div>
+    </div>
+  `;
+
+  const m = activeMerchant;
+  const prompt = `You are a senior credit analyst at Moniepoint, Africa's leading merchant banking platform. 
+
+Analyze this Nigerian small business merchant's credit profile and write a concise, professional credit intelligence report.
+
+MERCHANT: ${m.name}
+TYPE: ${m.type}
+CREDIT SCORE: ${m.score}/100 (${m.grade === 'good' ? 'Credit Eligible' : m.grade === 'fair' ? 'Needs Review' : 'High Risk'})
+MONTHLY REVENUE: ${m.monthlyRevenue}
+ACTIVE DAYS/MONTH: ${m.activeDays}/30
+REPEAT CUSTOMER RATE: ${m.repeatRate}
+REVENUE TREND: ${m.trendDir}
+
+BEHAVIORAL SIGNALS:
+${m.signals.map(s => `- ${s.name}: ${s.score}/100 (${s.grade}) — ${s.desc}`).join('\n')}
+
+Write a 3-paragraph analysis:
+1. Overall credit health summary — what the score reflects about this business
+2. The 2 strongest signals and why they matter for loan eligibility
+3. The single biggest risk factor and what it would take to mitigate it
+
+Keep it direct, specific to the Nigerian SME context, and write as if speaking to a Moniepoint loan officer reviewing the file. No bullet points — flowing prose only. Use ₦ for currency. Keep it under 220 words.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!res.ok) throw new Error(`API ${res.status}`);
+    const data = await res.json();
+    const text = data.content?.[0]?.text || 'No response received.';
+
+    // Render with animated typing feel
+    output.innerHTML = '';
+    output.style.animation = 'none';
+
+    // Split into paragraphs and render
+    const paras = text.split('\n\n').filter(p => p.trim());
+    output.innerHTML = paras.map(p => `<p style="margin-bottom:16px">${p.trim()}</p>`).join('');
+
+    // Show recs
+    document.getElementById('recs-section').style.display = 'block';
+    document.getElementById('recs-section').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  } catch (err) {
+    output.innerHTML = '<div style="color:var(--ink3);font-size:14px">Analysis unavailable — see error below.</div>';
+    errEl.style.display = 'block';
+    console.error(err);
+  }
+
+  btn.disabled = false;
+}
+
+// ── Init ──────────────────────────────────────────────────────────────
+renderSidebar();
+// Auto-select first merchant
+selectMerchant(1);
+</script>
+</body>
+</html>
