@@ -1,0 +1,103 @@
+/* ── Auth buttons ── */
+.btn-ghost {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.25);
+  color: rgba(255,255,255,.85);
+  padding: .4rem 1rem;
+  border-radius: 7px;
+  font-size: .875rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all .15s;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,.5); color: var(--white); }
+
+.btn-gold {
+  background: var(--gold);
+  border: none;
+  color: var(--white);
+  padding: .4rem 1.1rem;
+  border-radius: 7px;
+  font-size: .875rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: background .15s;
+}
+.btn-gold:hover { background: #b8832d; }
+
+/* ── User dropdown ── */
+.nav-user-menu { position: relative; }
+
+.nav-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--navy-mid);
+  border: 2px solid var(--gold);
+  color: var(--gold);
+  font-size: .75rem;
+  font-weight: 700;
+  font-family: 'Cormorant Garamond', serif;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color .15s;
+}
+.nav-avatar:hover { border-color: var(--gold-lt); }
+
+.nav-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  min-width: 190px;
+  box-shadow: 0 8px 32px rgba(15,27,45,.15);
+  overflow: hidden;
+  z-index: 200;
+}
+.nav-dropdown.open { display: block; }
+
+.nav-dropdown-name {
+  padding: .75rem 1rem .5rem;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.nav-dropdown-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: .25rem 0;
+}
+
+.nav-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .6rem 1rem;
+  font-size: .875rem;
+  color: var(--text-2);
+  text-decoration: none;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: background .12s;
+}
+.nav-dropdown-item:hover { background: var(--surface); color: var(--text); }
+.nav-dropdown-item svg { width: 15px; height: 15px; flex-shrink: 0; }
+.nav-dropdown-item.signout { color: #e05252; }
+.nav-dropdown-item.signout:hover { background: #fef2f2; }
+
+/* ── Form error ── */
+.form-error {
+  font-size: .82rem;
+  color: #e05252;
+  min-height: 1.2rem;
+  margin-bottom: .25rem;
+}

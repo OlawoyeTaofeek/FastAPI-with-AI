@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Home — Inkwell{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/home.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="page-wrapper">
+
+  <!-- MAIN FEED -->
+  <main>
+    <div class="feed-header">
+      <h1 class="feed-title">Your Feed</h1>
+      <div class="feed-tabs">
+        <button class="feed-tab active" onclick="setTab(this)">Latest</button>
+        <button class="feed-tab" onclick="setTab(this)">Trending</button>
+        <button class="feed-tab" onclick="setTab(this)">Following</button>
+      </div>
+    </div>
+
+    {% for post in posts %}
+    <article class="post-card">
+      <div class="post-meta">
+        <div class="avatar">{{ post.author.initials }}</div>
+        <div class="author-info">
+          <a class="author-name" href="#">{{ post.author.username }}</a>
+          <div class="post-date">{{ post.created_at }} · {{ post.read_time }} min read</div>
+        </div>
+        <button class="follow-btn-inline" onclick="toggleFollow(this)">Follow</button>
+      </div>
+
+      {% for tag in post.tags %}
+        <span class="tag-pill">{{ tag }}</span>
+      {% endfor %}
+
+      <a class="post-title" href="#">{{ post.title }}</a>
+      <p class="post-excerpt">{{ post.excerpt }}</p>
+
+      <div class="post-actions">
+        <button class="action-btn" onclick="toggleLike(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+          <span>{{ post.likes_count }}</span>
+        </button>
+
+        <button class="action-btn" onclick="toggleComments(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span>{{ post.comments_count }} comments</span>
+        </button>
+
+        <button class="action-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+          Share
+        </button>
+
+        <button class="read-more-btn">Read more →</button>
+      </div>
+
+      <!-- COMMENTS -->
+      <div class="comments-section">
+        <div class="comment-input-row">
+          <div class="comment-avatar">ME</div>
+          <textarea class="comment-input" placeholder="Add a comment..." rows="1"></textarea>
+          <button class="comment-submit">Post</button>
+        </div>
+
+        {% for comment in post.comments %}
+        <div class="comment-item">
+          <div class="comment-avatar">{{ comment.author.initials }}</div>
+          <div class="comment-body">
+            <div class="comment-author">{{ comment.author.username }}</div>
+            <div class="comment-text">{{ comment.body }}</div>
+            <div class="comment-time">{{ comment.created_at }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+    </article>
+    {% endfor %}
+
+  </main>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- Recent Posts -->
+    <div class="sidebar-card">
+      <div class="sidebar-card-header">Recent Posts</div>
+      <div class="sidebar-card-body">
+        {% for recent in recent_posts %}
+        <div class="recent-post-item">
+          <div class="recent-post-thumb">{{ recent.emoji }}</div>
+          <div class="recent-post-info">
+            <div class="recent-post-title">{{ recent.title }}</div>
+            <div class="recent-post-meta">{{ recent.author }} · {{ recent.time_ago }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Who to Follow -->
+    <div class="sidebar-card">
+      <div class="sidebar-card-header">Who to Follow</div>
+      <div class="sidebar-card-body">
+        {% for writer in suggested_writers %}
+        <div class="follow-item">
+          <div class="follow-avatar">{{ writer.initials }}</div>
+          <div class="follow-info">
+            <div class="follow-name">{{ writer.username }}</div>
+            <div class="follow-bio">{{ writer.bio }}</div>
+          </div>
+          <button class="follow-btn" onclick="toggleFollowSidebar(this)">Follow</button>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Browse Topics -->
+    <div class="sidebar-card">
+      <div class="sidebar-card-header">Browse Topics</div>
+      <div class="sidebar-card-body">
+        <ul class="category-list">
+          {% for topic in topics %}
+          <li class="category-item">
+            <span class="cat-name">{{ topic.name }}</span>
+            <span class="cat-count">{{ topic.post_count }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script src="/static/js/home.js"></script>
+{% endblock %}

@@ -1,0 +1,216 @@
+
+<style>
+#erd svg { width: 100%; height: auto; }
+#erd .er.entityBox { rx: 8; }
+</style>
+<h2 class="sr-only">Inkwell blog platform database entity relationship diagram showing all tables and their connections</h2>
+<div id="erd" style="padding: 1rem 0;"></div>
+<script type="module">
+import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+await document.fonts.ready;
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  fontFamily: '"Anthropic Sans", sans-serif',
+  themeVariables: {
+    darkMode: dark,
+    fontSize: '13px',
+    fontFamily: '"Anthropic Sans", sans-serif',
+    lineColor: dark ? '#9c9a92' : '#73726c',
+    textColor: dark ? '#c2c0b6' : '#3d3d3a',
+    primaryColor: dark ? '#3C3489' : '#EEEDFE',
+    primaryBorderColor: dark ? '#534AB7' : '#AFA9EC',
+    primaryTextColor: dark ? '#CECBF6' : '#26215C',
+  },
+});
+
+const diagram = `erDiagram
+  users {
+    uuid id PK
+    string email UK
+    string username UK
+    string full_name
+    string password_hash
+    text bio
+    string avatar_url
+    string website_url
+    string location
+    boolean is_pro
+    boolean is_active
+    boolean email_verified
+    string oauth_provider
+    string oauth_provider_id
+    timestamp created_at
+    timestamp updated_at
+  }
+
+  subscriptions {
+    uuid id PK
+    uuid subscriber_id FK
+    uuid author_id FK
+    string plan
+    decimal price_per_month
+    string stripe_subscription_id
+    string status
+    timestamp started_at
+    timestamp expires_at
+    timestamp created_at
+  }
+
+  follows {
+    uuid id PK
+    uuid follower_id FK
+    uuid following_id FK
+    timestamp created_at
+  }
+
+  posts {
+    uuid id PK
+    uuid author_id FK
+    string title
+    string slug UK
+    text excerpt
+    text body_html
+    text body_markdown
+    string cover_emoji
+    string cover_image_url
+    string category
+    string status
+    boolean is_members_only
+    integer read_time_minutes
+    integer view_count
+    timestamp published_at
+    timestamp created_at
+    timestamp updated_at
+  }
+
+  tags {
+    uuid id PK
+    string name UK
+    string slug UK
+    timestamp created_at
+  }
+
+  post_tags {
+    uuid post_id FK
+    uuid tag_id FK
+  }
+
+  likes {
+    uuid id PK
+    uuid user_id FK
+    uuid post_id FK
+    timestamp created_at
+  }
+
+  bookmarks {
+    uuid id PK
+    uuid user_id FK
+    uuid post_id FK
+    timestamp created_at
+  }
+
+  comments {
+    uuid id PK
+    uuid post_id FK
+    uuid author_id FK
+    uuid parent_id FK
+    text body
+    boolean is_edited
+    timestamp created_at
+    timestamp updated_at
+  }
+
+  comment_likes {
+    uuid id PK
+    uuid user_id FK
+    uuid comment_id FK
+    timestamp created_at
+  }
+
+  notifications {
+    uuid id PK
+    uuid recipient_id FK
+    uuid actor_id FK
+    string type
+    uuid entity_id
+    string entity_type
+    boolean is_read
+    timestamp created_at
+  }
+
+  newsletter_subscribers {
+    uuid id PK
+    uuid user_id FK
+    string email
+    boolean is_active
+    timestamp subscribed_at
+  }
+
+  ai_chat_sessions {
+    uuid id PK
+    uuid user_id FK
+    uuid post_id FK
+    timestamp created_at
+  }
+
+  ai_chat_messages {
+    uuid id PK
+    uuid session_id FK
+    string role
+    text content
+    timestamp created_at
+  }
+
+  users ||--o{ posts : "writes"
+  users ||--o{ follows : "follower"
+  users ||--o{ follows : "following"
+  users ||--o{ subscriptions : "subscriber"
+  users ||--o{ subscriptions : "author"
+  users ||--o{ likes : "gives"
+  users ||--o{ bookmarks : "saves"
+  users ||--o{ comments : "writes"
+  users ||--o{ comment_likes : "gives"
+  users ||--o{ notifications : "receives"
+  users ||--o{ notifications : "triggers"
+  users ||--o| newsletter_subscribers : "subscribes"
+  users ||--o{ ai_chat_sessions : "starts"
+  posts ||--o{ post_tags : "has"
+  posts ||--o{ likes : "receives"
+  posts ||--o{ bookmarks : "saved in"
+  posts ||--o{ comments : "has"
+  posts ||--o{ ai_chat_sessions : "context for"
+  tags ||--o{ post_tags : "used in"
+  comments ||--o{ comments : "parent of"
+  comments ||--o{ comment_likes : "receives"
+  ai_chat_sessions ||--o{ ai_chat_messages : "contains"
+`;
+
+const { svg } = await mermaid.render('erd-svg', diagram);
+document.getElementById('erd').innerHTML = svg;
+
+document.querySelectorAll('#erd svg .node').forEach(node => {
+  const firstPath = node.querySelector('path[d]');
+  if (!firstPath) return;
+  const d = firstPath.getAttribute('d');
+  const nums = d.match(/-?[\d.]+/g)?.map(Number);
+  if (!nums || nums.length < 8) return;
+  const xs = [nums[0], nums[2], nums[4], nums[6]];
+  const ys = [nums[1], nums[3], nums[5], nums[7]];
+  const x = Math.min(...xs), y = Math.min(...ys);
+  const w = Math.max(...xs) - x, h = Math.max(...ys) - y;
+  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.setAttribute('x', x); rect.setAttribute('y', y);
+  rect.setAttribute('width', w); rect.setAttribute('height', h);
+  rect.setAttribute('rx', '8');
+  for (const a of ['fill', 'stroke', 'stroke-width', 'class', 'style']) {
+    if (firstPath.hasAttribute(a)) rect.setAttribute(a, firstPath.getAttribute(a));
+  }
+  firstPath.replaceWith(rect);
+});
+
+document.querySelectorAll('#erd svg .row-rect-odd path, #erd svg .row-rect-even path').forEach(p => {
+  p.setAttribute('stroke', 'none');
+});
+</script>

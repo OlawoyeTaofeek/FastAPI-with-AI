@@ -8,6 +8,9 @@ class PostBase(BaseModel):
     content: str
     published: bool = True
 
+class PostCreate(PostBase):
+    pass
+
 class UserBase(BaseModel):
     email: EmailStr
     password: str
@@ -15,12 +18,22 @@ class UserBase(BaseModel):
 class PostCreate(PostBase):
     pass
 
-class UserCreate(UserBase):
-    pass
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
+    full_name: str
+    bio: str | None = None
+    username: str
+    country: str | None = None
+    date_of_birth: str | None = None  # or date type
 
 class UserOut(BaseModel):
     id: int
     email: EmailStr
+    full_name: str
+    username: str
+    bio: str | None = None
+    country: str | None = None
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)

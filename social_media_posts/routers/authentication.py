@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, status, Response, HTTPException
+from fastapi import APIRouter, Depends, status, Response, HTTPException, Request
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 from app import models, utils
 from app.database import get_db
 from sqlalchemy.orm import Session
@@ -10,9 +12,16 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 router = APIRouter(tags=['Authentication'])
 
+templates = Jinja2Templates(directory="frontend/templates")
+
+# serve your HTML file
+@router.get("/login", response_class=HTMLResponse)
+def home(request: Request):
+    # ✅ New way
+    return templates.TemplateResponse(request=request, name="login.html")
+
 @router.post("/login", response_model=Token)
 def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    # NB: user)credentials returns 2 things: username and password
     db_user = db.query(models.User)\
                  .filter(models.User.email == user_credentials.username)\
                  .first()
@@ -23,7 +32,6 @@ def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session =
     if not utils.verify_password(user_credentials.password, db_user.password):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid credentials")
     
-    ## Create Token and the return the token
     access_token = create_access_token(
             data = {
                 "user_id": db_user.id,

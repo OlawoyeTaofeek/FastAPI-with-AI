@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inkwell — Where Writers and Readers Connect</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f1b2d;
+    --navy-mid: #1a2d45;
+    --navy-light: #243752;
+    --gold: #c9933a;
+    --gold-light: #e8b86d;
+    --gold-pale: #f5e6cc;
+    --cream: #faf8f4;
+    --white: #ffffff;
+    --text-primary: #0f1b2d;
+    --text-secondary: #4a5568;
+    --text-muted: #8a98a8;
+    --border: #e8e2d9;
+    --border-dark: #c9c0b3;
+    --surface: #f5f2ed;
+    --card-shadow: 0 1px 3px rgba(15,27,45,0.06), 0 4px 16px rgba(15,27,45,0.04);
+    --card-shadow-hover: 0 4px 24px rgba(15,27,45,0.12), 0 1px 4px rgba(15,27,45,0.08);
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    background: var(--navy);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 62px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--navy-light);
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--white);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .nav-logo span { color: var(--gold); }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    list-style: none;
+  }
+  .nav-links a {
+    color: rgba(255,255,255,0.65);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.4rem 0.85rem;
+    border-radius: 6px;
+    transition: all 0.15s;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--white); background: var(--navy-light); }
+
+  .nav-actions { display: flex; align-items: center; gap: 0.5rem; }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.85);
+    padding: 0.4rem 1rem;
+    border-radius: 7px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.5); color: var(--white); background: var(--navy-light); }
+
+  .btn-gold {
+    background: var(--gold);
+    border: none;
+    color: var(--white);
+    padding: 0.4rem 1.1rem;
+    border-radius: 7px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+  .btn-gold:hover { background: #b8832d; }
+
+  /* ─── LAYOUT ─── */
+  .page-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  /* ─── FEED ─── */
+  .feed-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+  .feed-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .feed-tabs {
+    display: flex;
+    gap: 0.25rem;
+    background: var(--border);
+    padding: 3px;
+    border-radius: 8px;
+  }
+  .feed-tab {
+    padding: 0.3rem 0.85rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--text-secondary);
+    border: none;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .feed-tab.active { background: var(--white); color: var(--text-primary); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+  /* ─── POST CARD ─── */
+  .post-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.4rem 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--card-shadow);
+    transition: box-shadow 0.2s, transform 0.2s;
+    cursor: pointer;
+    position: relative;
+  }
+  .post-card:hover { box-shadow: var(--card-shadow-hover); transform: translateY(-1px); }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--gold);
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 2px solid var(--border);
+  }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+  .author-info { flex: 1; min-width: 0; }
+  .author-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gold);
+    text-decoration: none;
+  }
+  .author-name:hover { color: var(--gold-light); }
+  .post-date { font-size: 0.78rem; color: var(--text-muted); margin-top: 1px; }
+
+  .follow-btn-inline {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.65rem;
+    border-radius: 5px;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .follow-btn-inline:hover { background: var(--gold); color: var(--white); }
+  .follow-btn-inline.following { background: var(--gold-pale); color: var(--gold); border-color: var(--gold-pale); }
+
+  .tag-pill {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 0.15rem 0.6rem;
+    border-radius: 20px;
+    background: var(--surface);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    margin-bottom: 0.5rem;
+    margin-right: 0.25rem;
+  }
+
+  .post-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.35;
+    margin-bottom: 0.55rem;
+    text-decoration: none;
+    display: block;
+  }
+  .post-title:hover { color: var(--gold); }
+
+  .post-excerpt {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .post-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 7px;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .action-btn:hover { background: var(--surface); color: var(--text-secondary); }
+  .action-btn.liked { color: #e05252; }
+  .action-btn.liked svg path { fill: #e05252; stroke: #e05252; }
+  .action-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  .read-more-btn {
+    margin-left: auto;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--gold);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    padding: 0.35rem 0;
+    transition: color 0.15s;
+  }
+  .read-more-btn:hover { color: var(--gold-light); }
+
+  /* ─── COMMENTS DRAWER ─── */
+  .comments-section {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+    margin-top: 0.75rem;
+  }
+  .comments-section.open { display: block; }
+
+  .comment-input-row {
+    display: flex;
+    gap: 0.65rem;
+    margin-bottom: 0.85rem;
+    align-items: flex-start;
+  }
+  .comment-input {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.84rem;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-primary);
+    background: var(--surface);
+    outline: none;
+    resize: none;
+    min-height: 38px;
+    transition: border-color 0.15s;
+  }
+  .comment-input:focus { border-color: var(--gold); background: var(--white); }
+
+  .comment-submit {
+    padding: 0.45rem 0.9rem;
+    border-radius: 7px;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .comment-submit:hover { background: var(--navy-mid); }
+
+  .comment-item {
+    display: flex;
+    gap: 0.65rem;
+    margin-bottom: 0.75rem;
+  }
+  .comment-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--navy-light);
+    color: var(--gold);
+    font-size: 0.68rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .comment-body { flex: 1; }
+  .comment-author { font-size: 0.8rem; font-weight: 600; color: var(--text-primary); }
+  .comment-text { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin-top: 2px; }
+  .comment-time { font-size: 0.73rem; color: var(--text-muted); margin-top: 3px; }
+
+  /* ─── SIDEBAR ─── */
+  .sidebar { display: flex; flex-direction: column; gap: 1.25rem; }
+
+  .sidebar-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+  }
+  .sidebar-card-header {
+    padding: 0.9rem 1.2rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .sidebar-card-body { padding: 0.75rem 1.2rem 1rem; }
+
+  /* Recent Posts */
+  .recent-post-item {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.65rem 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .recent-post-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .recent-post-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+  }
+  .recent-post-info { flex: 1; min-width: 0; }
+  .recent-post-title { font-size: 0.82rem; font-weight: 600; color: var(--text-primary); line-height: 1.35; margin-bottom: 2px; }
+  .recent-post-title:hover { color: var(--gold); }
+  .recent-post-meta { font-size: 0.73rem; color: var(--text-muted); }
+
+  /* Who to Follow */
+  .follow-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .follow-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .follow-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--gold);
+    font-size: 0.78rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .follow-info { flex: 1; min-width: 0; }
+  .follow-name { font-size: 0.84rem; font-weight: 600; color: var(--text-primary); }
+  .follow-bio { font-size: 0.74rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .follow-btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 6px;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .follow-btn:hover, .follow-btn.following { background: var(--gold); color: var(--white); }
+
+  /* Categories */
+  .category-list { list-style: none; }
+  .category-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .category-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .category-item:hover .cat-name { color: var(--gold); }
+  .cat-name { font-size: 0.875rem; font-weight: 500; color: var(--text-primary); }
+  .cat-count {
+    font-size: 0.75rem;
+    background: var(--surface);
+    color: var(--text-muted);
+    border-radius: 20px;
+    padding: 0.1rem 0.5rem;
+    border: 1px solid var(--border);
+  }
+
+  /* ─── AUTH MODAL ─── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,18,30,0.65);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(3px);
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--white);
+    border-radius: 20px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 440px;
+    margin: 1rem;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+    animation: modalIn 0.25s ease;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(12px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .modal-header {
+    background: var(--navy);
+    padding: 2.25rem 2rem 1.75rem;
+    text-align: center;
+    position: relative;
+  }
+  .modal-close {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: rgba(255,255,255,0.7);
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+  }
+  .modal-close:hover { background: rgba(255,255,255,0.2); color: var(--white); }
+
+  .modal-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.3rem;
+  }
+  .modal-logo span { color: var(--gold); }
+  .modal-tagline { font-size: 0.875rem; color: rgba(255,255,255,0.55); }
+
+  .modal-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-tab {
+    flex: 1;
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.15s;
+  }
+  .modal-tab.active { color: var(--text-primary); border-bottom-color: var(--gold); }
+
+  .modal-body { padding: 1.75rem 2rem 2rem; }
+
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  .form-group { margin-bottom: 1.1rem; }
+  .form-label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.45rem;
+  }
+  .form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 0.925rem;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-primary);
+    background: #f8f6f2;
+    outline: none;
+    transition: all 0.15s;
+  }
+  .form-input:focus { border-color: var(--gold); background: var(--white); box-shadow: 0 0 0 3px rgba(201,147,58,0.12); }
+
+  .forgot-link {
+    display: block;
+    text-align: right;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-top: 0.4rem;
+    transition: color 0.15s;
+  }
+  .forgot-link:hover { color: var(--gold); }
+
+  .btn-primary-full {
+    width: 100%;
+    padding: 0.85rem;
+    border-radius: 10px;
+    border: none;
+    background: var(--navy);
+    color: var(--white);
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    margin-bottom: 1.25rem;
+    transition: background 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .btn-primary-full:hover { background: #1a2d45; }
+
+  .or-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+  }
+  .or-divider::before, .or-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .social-btns { display: flex; gap: 0.65rem; }
+  .social-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.65rem;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: all 0.15s;
+  }
+  .social-btn:hover { border-color: var(--gold); background: var(--gold-pale); }
+
+  .social-btn svg { width: 18px; height: 18px; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    .page-wrapper { grid-template-columns: 1fr; }
+    .sidebar { order: -1; }
+    nav { padding: 0 1rem; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">ink<span>well</span></a>
+  <ul class="nav-links">
+    <li><a href="#" class="active">Home</a></li>
+    <li><a href="#">Explore</a></li>
+    <li><a href="#">Topics</a></li>
+    <li><a href="#">Writers</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="btn-ghost" onclick="openModal('signin')">Sign in</button>
+    <button class="btn-gold" onclick="openModal('register')">Get started</button>
+  </div>
+</nav>
+
+<!-- PAGE -->
+<div class="page-wrapper">
+
+  <!-- MAIN FEED -->
+  <main>
+    <div class="feed-header">
+      <h1 class="feed-title">Your Feed</h1>
+      <div class="feed-tabs">
+        <button class="feed-tab active" onclick="setTab(this)">Latest</button>
+        <button class="feed-tab" onclick="setTab(this)">Trending</button>
+        <button class="feed-tab" onclick="setTab(this)">Following</button>
+      </div>
+    </div>
+
+    <!-- POST 1 -->
+    <article class="post-card">
+      <div class="post-meta">
+        <div class="avatar" style="background:#1a2d45">CM</div>
+        <div class="author-info">
+          <a class="author-name" href="#">CoreyMSchafer</a>
+          <div class="post-date">December 31, 2025 · 5 min read</div>
+        </div>
+        <button class="follow-btn-inline" onclick="toggleFollow(this)">Follow</button>
+      </div>
+      <span class="tag-pill">FastAPI</span>
+      <span class="tag-pill">Backend</span>
+      <a class="post-title" href="#">Why I Love FastAPI</a>
+      <p class="post-excerpt">FastAPI has completely changed how I build APIs. The automatic documentation, type hints, and async support make development so much faster. Plus, the performance is incredible — benchmarks put it neck-and-neck with Node.js and Go.</p>
+      <div class="post-actions">
+        <button class="action-btn" onclick="toggleLike(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span>142</span>
+        </button>
+        <button class="action-btn" onclick="toggleComments(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>18 comments</span>
+        </button>
+        <button class="action-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Share
+        </button>
+        <button class="read-more-btn">Read more →</button>
+      </div>
+      <div class="comments-section">
+        <div class="comment-input-row">
+          <div class="comment-avatar">ME</div>
+          <textarea class="comment-input" placeholder="Add a comment..." rows="1"></textarea>
+          <button class="comment-submit">Post</button>
+        </div>
+        <div class="comment-item">
+          <div class="comment-avatar" style="background:#243752; color:#e8b86d">AJ</div>
+          <div class="comment-body">
+            <div class="comment-author">alex_j</div>
+            <div class="comment-text">FastAPI is genuinely incredible. The Pydantic integration alone saves so much boilerplate!</div>
+            <div class="comment-time">2 hours ago</div>
+          </div>
+        </div>
+        <div class="comment-item">
+          <div class="comment-avatar" style="background:#1a4a3a; color:#6dd4a8">SR</div>
+          <div class="comment-body">
+            <div class="comment-author">sara_r</div>
+            <div class="comment-text">Completely agree on async support. Moving from Flask to FastAPI was the best decision.</div>
+            <div class="comment-time">5 hours ago</div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- POST 2 -->
+    <article class="post-card">
+      <div class="post-meta">
+        <div class="avatar" style="background:#3a2010; color:#e8b86d">GB</div>
+        <div class="author-info">
+          <a class="author-name" href="#">GoodBoyBronx</a>
+          <div class="post-date">December 30, 2025 · 3 min read</div>
+        </div>
+        <button class="follow-btn-inline" onclick="toggleFollow(this)">Follow</button>
+      </div>
+      <span class="tag-pill">YouTube</span>
+      <span class="tag-pill">Python</span>
+      <a class="post-title" href="#">Corey Schafer Has the Best YouTube Tutorials!</a>
+      <p class="post-excerpt">This was written by a viewer and definitely not by me… I mean him. Totally not written by him, but by me — a real viewer. Seriously, check out his channel for amazing Python content. The way he explains decorators is unlike anything else online.</p>
+      <div class="post-actions">
+        <button class="action-btn liked" onclick="toggleLike(this)">
+          <svg viewBox="0 0 24 24" fill="#e05252" stroke="#e05252" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span>87</span>
+        </button>
+        <button class="action-btn" onclick="toggleComments(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>9 comments</span>
+        </button>
+        <button class="action-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Share
+        </button>
+        <button class="read-more-btn">Read more →</button>
+      </div>
+      <div class="comments-section">
+        <div class="comment-input-row">
+          <div class="comment-avatar">ME</div>
+          <textarea class="comment-input" placeholder="Add a comment..." rows="1"></textarea>
+          <button class="comment-submit">Post</button>
+        </div>
+        <div class="comment-item">
+          <div class="comment-avatar" style="background:#3a2010; color:#e8b86d">PK</div>
+          <div class="comment-body">
+            <div class="comment-author">pk_dev</div>
+            <div class="comment-text">Lol totally a real viewer 😂 His OOP series changed my life though, for real.</div>
+            <div class="comment-time">1 day ago</div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- POST 3 -->
+    <article class="post-card">
+      <div class="post-meta">
+        <div class="avatar" style="background:#0e3040; color:#6db8e8">PT</div>
+        <div class="author-info">
+          <a class="author-name" href="#">PoppyTheCoder</a>
+          <div class="post-date">December 27, 2025 · 7 min read</div>
+        </div>
+        <button class="follow-btn-inline following" onclick="toggleFollow(this)">Following</button>
+      </div>
+      <span class="tag-pill">Async</span>
+      <span class="tag-pill">Python</span>
+      <span class="tag-pill">Beginner</span>
+      <a class="post-title" href="#">Async/Await Finally Clicked</a>
+      <p class="post-excerpt">I've been struggling with async programming for months, but FastAPI's approach finally made it click. Using 'async def' for endpoints and 'await' for database calls just makes sense. Here's how I broke it down step by step...</p>
+      <div class="post-actions">
+        <button class="action-btn" onclick="toggleLike(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span>213</span>
+        </button>
+        <button class="action-btn" onclick="toggleComments(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>34 comments</span>
+        </button>
+        <button class="action-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Share
+        </button>
+        <button class="read-more-btn">Read more →</button>
+      </div>
+      <div class="comments-section">
+        <div class="comment-input-row">
+          <div class="comment-avatar">ME</div>
+          <textarea class="comment-input" placeholder="Add a comment..." rows="1"></textarea>
+          <button class="comment-submit">Post</button>
+        </div>
+        <div class="comment-item">
+          <div class="comment-avatar" style="background:#0e3040; color:#6db8e8">MV</div>
+          <div class="comment-body">
+            <div class="comment-author">m_vance</div>
+            <div class="comment-text">This post literally unblocked me. Been staring at asyncio docs for weeks.</div>
+            <div class="comment-time">3 days ago</div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- POST 4 -->
+    <article class="post-card">
+      <div class="post-meta">
+        <div class="avatar" style="background:#1a3820; color:#6dcc8a">FD</div>
+        <div class="author-info">
+          <a class="author-name" href="#">FarmDogs</a>
+          <div class="post-date">December 26, 2025 · 4 min read</div>
+        </div>
+        <button class="follow-btn-inline" onclick="toggleFollow(this)">Follow</button>
+      </div>
+      <span class="tag-pill">SQLAlchemy</span>
+      <span class="tag-pill">Database</span>
+      <a class="post-title" href="#">SQLAlchemy 2.0 — What You Need to Know</a>
+      <p class="post-excerpt">The new SQLAlchemy 2.0 API with FastAPI is a game changer. The new mapped_column syntax is much more intuitive than the old Column() pattern, and type safety is dramatically improved. Let me walk you through the upgrade process...</p>
+      <div class="post-actions">
+        <button class="action-btn" onclick="toggleLike(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span>58</span>
+        </button>
+        <button class="action-btn" onclick="toggleComments(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>7 comments</span>
+        </button>
+        <button class="action-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Share
+        </button>
+        <button class="read-more-btn">Read more →</button>
+      </div>
+      <div class="comments-section">
+        <div class="comment-input-row">
+          <div class="comment-avatar">ME</div>
+          <textarea class="comment-input" placeholder="Add a comment..." rows="1"></textarea>
+          <button class="comment-submit">Post</button>
+        </div>
+      </div>
+    </article>
+
+  </main>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- Recent Posts -->
+    <div class="sidebar-card">
+      <div class="sidebar-card-header">Recent Posts</div>
+      <div class="sidebar-card-body" style="padding-top:0.5rem">
+        <div class="recent-post-item">
+          <div class="recent-post-thumb" style="background:#e8f4fd">📡</div>
+          <div class="recent-post-info">
+            <div class="recent-post-title">Building Real-Time APIs with WebSockets</div>
+            <div class="recent-post-meta">PoppyTheCoder · 2h ago</div>
+          </div>
+        </div>
+        <div class="recent-post-item">
+          <div class="recent-post-thumb" style="background:#fdf0e0">🔐</div>
+          <div class="recent-post-info">
+            <div class="recent-post-title">JWT Auth Patterns in FastAPI</div>
+            <div class="recent-post-meta">CoreyMSchafer · 5h ago</div>
+          </div>
+        </div>
+        <div class="recent-post-item">
+          <div class="recent-post-thumb" style="background:#edf8ee">🐘</div>
+          <div class="recent-post-info">
+            <div class="recent-post-title">PostgreSQL vs SQLite for Development</div>
+            <div class="recent-post-meta">FarmDogs · 1d ago</div>
+          </div>
+        </div>
+        <div class="recent-post-item">
+          <div class="recent-post-thumb" style="background:#fde8f0">🎨</div>
+          <div class="recent-post-info">
+            <div class="recent-post-title">CSS Grid Layout Deep Dive</div>
+            <div class="recent-post-meta">GoodBoyBronx · 2d ago</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Who to Follow -->
+    <div class="sidebar-card">
+      <div class="sidebar-card-header">Who to Follow</div>
+      <div class="sidebar-card-body" style="padding-top:0.5rem">
+        <div class="follow-item">
+          <div class="follow-avatar" style="background:#2d1a40; color:#c89aef">NK</div>
+          <div class="follow-info">
+            <div class="follow-name">NinaK_writes</div>
+            <div class="follow-bio">Systems design & distributed…</div>
+          </div>
+          <button class="follow-btn" onclick="toggleFollowSidebar(this)">Follow</button>
+        </div>
+        <div class="follow-item">
+          <div class="follow-avatar" style="background:#0e2d3a; color:#6db8d4">TL</div>
+          <div class="follow-info">
+            <div class="follow-name">TheLukeDev</div>
+            <div class="follow-bio">React, TypeScript, Tailwind…</div>
+          </div>
+          <button class="follow-btn" onclick="toggleFollowSidebar(this)">Follow</button>
+        </div>
+        <div class="follow-item">
+          <div class="follow-avatar" style="background:#1a3010; color:#8fd470">MH</div>
+          <div class="follow-info">
+            <div class="follow-name">MHasan_io</div>
+            <div class="follow-bio">ML engineer, open source…</div>
+          </div>
+          <button class="follow-btn" onclick="toggleFollowSidebar(this)">Follow</button>
+        </div>
+        <div class="follow-item">
+          <div class="follow-avatar" style="background:#3a1010; color:#ef9a9a">ZR</div>
+          <div class="follow-info">
+            <div class="follow-name">ZaraR_codes</div>
+            <div class="follow-bio">DevOps, Kubernetes, AWS…</div>
+          </div>
+          <button class="follow-btn" onclick="toggleFollowSidebar(this)">Follow</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="sidebar-card">
+      <div class="sidebar-card-header">Browse Topics</div>
+      <div class="sidebar-card-body" style="padding-top:0.25rem">
+        <ul class="category-list">
+          <li class="category-item"><span class="cat-name">Latest Posts</span><span class="cat-count">128</span></li>
+          <li class="category-item"><span class="cat-name">Announcements</span><span class="cat-count">14</span></li>
+          <li class="category-item"><span class="cat-name">Python & FastAPI</span><span class="cat-count">87</span></li>
+          <li class="category-item"><span class="cat-name">Frontend Dev</span><span class="cat-count">56</span></li>
+          <li class="category-item"><span class="cat-name">Databases</span><span class="cat-count">43</span></li>
+          <li class="category-item"><span class="cat-name">Calendars</span><span class="cat-count">9</span></li>
+          <li class="category-item"><span class="cat-name">Misc &amp; etc</span><span class="cat-count">22</span></li>
+        </ul>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal" onclick="closeModalOnOverlay(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-logo">ink<span>well</span></div>
+      <div class="modal-tagline">Where writers and readers connect</div>
+    </div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" id="tab-signin" onclick="switchTab('signin')">Sign in</button>
+      <button class="modal-tab" id="tab-register" onclick="switchTab('register')">Create account</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- SIGN IN -->
+      <div class="tab-pane active" id="pane-signin">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" placeholder="••••••••">
+          <a href="#" class="forgot-link">Forgot password?</a>
+        </div>
+        <button class="btn-primary-full">Sign in to Inkwell</button>
+        <div class="or-divider">Or continue with</div>
+        <div class="social-btns">
+          <button class="social-btn">
+            <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Google
+          </button>
+          <button class="social-btn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            GitHub
+          </button>
+        </div>
+      </div>
+
+      <!-- REGISTER -->
+      <div class="tab-pane" id="pane-register">
+        <div class="form-group">
+          <label class="form-label">Full name</label>
+          <input class="form-input" type="text" placeholder="Jane Doe">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input class="form-input" type="text" placeholder="janedoe_writes">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" placeholder="Create a strong password">
+        </div>
+        <button class="btn-primary-full">Create my account</button>
+        <div class="or-divider">Or sign up with</div>
+        <div class="social-btns">
+          <button class="social-btn">
+            <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Google
+          </button>
+          <button class="social-btn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            GitHub
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function openModal(tab) {
+    document.getElementById('authModal').classList.add('open');
+    switchTab(tab === 'register' ? 'register' : 'signin');
+  }
+  function closeModal() { document.getElementById('authModal').classList.remove('open'); }
+  function closeModalOnOverlay(e) { if (e.target === document.getElementById('authModal')) closeModal(); }
+
+  function switchTab(tab) {
+    document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('pane-' + tab).classList.add('active');
+  }
+
+  function setTab(el) {
+    document.querySelectorAll('.feed-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function toggleLike(btn) {
+    const span = btn.querySelector('span');
+    const svg = btn.querySelector('svg');
+    const isLiked = btn.classList.toggle('liked');
+    const count = parseInt(span.textContent);
+    span.textContent = isLiked ? count + 1 : count - 1;
+    if (isLiked) {
+      svg.setAttribute('fill', '#e05252');
+      svg.setAttribute('stroke', '#e05252');
+    } else {
+      svg.setAttribute('fill', 'none');
+      svg.setAttribute('stroke', 'currentColor');
+    }
+  }
+
+  function toggleComments(btn) {
+    const card = btn.closest('.post-card');
+    const section = card.querySelector('.comments-section');
+    section.classList.toggle('open');
+  }
+
+  function toggleFollow(btn) {
+    const isFollowing = btn.classList.toggle('following');
+    btn.textContent = isFollowing ? 'Following' : 'Follow';
+  }
+
+  function toggleFollowSidebar(btn) {
+    const isFollowing = btn.classList.toggle('following');
+    btn.textContent = isFollowing ? 'Following' : 'Follow';
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 from .database import Base  
-from sqlalchemy import TIMESTAMP, Column, Integer, String, Boolean, PrimaryKeyConstraint
+from sqlalchemy import TIMESTAMP, Column, Date, Integer, String, Boolean, PrimaryKeyConstraint
 from sqlalchemy.sql.expression import text
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
@@ -21,6 +21,11 @@ class User(Base):
     id = Column(Integer, nullable=False, primary_key=True, index=True)
     email = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False, unique=True)
+    full_name = Column(String(255), nullable=False)  # 👈 add this
+    bio = Column(String(500), nullable=True)          # 👈 add this
+    username = Column(String(100), nullable=False, unique=True)  # 👈 add this
+    country = Column(String(100), nullable=True)      # 👈 add this
+    date_of_birth = Column(Date, nullable=True)       # 👈 add this
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
     posts = relationship("Post", back_populates="owner")
     likes = relationship("Like", back_populates="owner")

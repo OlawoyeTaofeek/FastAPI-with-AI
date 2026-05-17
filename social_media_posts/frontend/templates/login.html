@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inkwell — Sign in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:   #141828;
+    --gold:   #C9943A;
+    --gold-l: #DBA84F;
+    --bg:     #F7F6F2;
+    --white:  #FFFFFF;
+    --border: #E2DFD8;
+    --text:   #1A1A2E;
+    --muted:  #9A9490;
+    --label:  #8A8580;
+    --input-bg: #F2EFE9;
+    --radius: 14px;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #C8C4BC;
+    font-family: 'DM Sans', sans-serif;
+    padding: 24px;
+  }
+
+  /* card */
+  .card {
+    width: 100%;
+    max-width: 480px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.28), 0 4px 12px rgba(0,0,0,0.12);
+    background: var(--white);
+    animation: rise .55s cubic-bezier(.22,.68,0,1.2) both;
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(22px) scale(.97); }
+    to   { opacity: 1; transform: translateY(0)   scale(1);    }
+  }
+
+  /* header */
+  .card-header {
+    background: var(--navy);
+    padding: 44px 40px 40px;
+    text-align: center;
+  }
+  .brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 600;
+    letter-spacing: -.5px;
+    line-height: 1;
+    color: var(--white);
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+  .brand span { color: var(--gold); }
+  .tagline {
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(255,255,255,.52);
+    letter-spacing: .25px;
+  }
+
+  /* tabs */
+  .tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+  }
+  .tab {
+    padding: 18px 0 16px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--muted);
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+    position: relative;
+    transition: color .18s;
+  }
+  .tab.active {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0; right: 0;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 2px 2px 0 0;
+  }
+  .tab:not(.active):hover { color: #555; }
+
+  /* body */
+  .card-body {
+    padding: 36px 40px 40px;
+    background: var(--white);
+  }
+
+  /* field */
+  .field { margin-bottom: 22px; }
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    color: var(--label);
+    margin-bottom: 8px;
+  }
+  .field input {
+    width: 100%;
+    padding: 15px 18px;
+    border: 1.5px solid transparent;
+    border-radius: var(--radius);
+    background: var(--input-bg);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+    transition: border-color .18s, background .18s, box-shadow .18s;
+  }
+  .field input::placeholder { color: #c0bcb5; }
+  .field input:focus {
+    background: var(--white);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,148,58,.13);
+  }
+
+  /* forgot */
+  .forgot-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -12px;
+    margin-bottom: 26px;
+  }
+  .forgot-row a {
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color .15s;
+  }
+  .forgot-row a:hover { color: var(--gold); }
+
+  /* primary button */
+  .btn-primary {
+    width: 100%;
+    padding: 16px;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    cursor: pointer;
+    transition: background .18s, transform .12s, box-shadow .18s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0);
+    transition: background .18s;
+  }
+  .btn-primary:hover { background: #1e2540; box-shadow: 0 6px 18px rgba(20,24,40,.28); }
+  .btn-primary:hover::after { background: rgba(255,255,255,.04); }
+  .btn-primary:active { transform: scale(.987); }
+
+  /* divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 26px 0;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* social buttons */
+  .social-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .btn-social {
+    padding: 13px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: border-color .18s, box-shadow .18s, background .15s;
+  }
+  .btn-social:hover {
+    border-color: #ccc;
+    background: var(--bg);
+    box-shadow: 0 2px 8px rgba(0,0,0,.07);
+  }
+  .btn-social:active { transform: scale(.985); }
+  .btn-social svg { flex-shrink: 0; }
+
+  /* loading state */
+  .btn-primary.loading { opacity: .7; pointer-events: none; }
+  .btn-primary.loading::before {
+    content: '';
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .65s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* message banner */
+  #message {
+    margin-top: 16px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    display: none;
+    text-align: center;
+  }
+  #message.success {
+    display: block;
+    background: #EAF7EE;
+    color: #2A7A45;
+    border: 1px solid #B6E4C6;
+  }
+  #message.error {
+    display: block;
+    background: #FEF0EE;
+    color: #B83A2A;
+    border: 1px solid #F5C4BC;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <div class="card-header">
+    <div class="brand">ink<span>well</span></div>
+    <p class="tagline">Where writers and readers connect</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="setTab(this)">Sign in</button>
+    <button class="tab" onclick="setTab(this)">Create account</button>
+  </div>
+
+  <!-- ── SIGN IN PANEL ── -->
+  <div class="card-body" id="panel-signin">
+
+    <div class="field">
+      <label for="username">Email</label>
+      <input id="username" type="email" placeholder="you@example.com" autocomplete="username">
+    </div>
+
+    <div class="field">
+      <label for="password">Password</label>
+      <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+
+    <div class="forgot-row">
+      <a href="#">Forgot password?</a>
+    </div>
+
+    <button class="btn-primary" id="login-btn" onclick="login()">Sign in to Inkwell</button>
+    <div id="login-message"></div>
+
+    <div class="divider">Or continue with</div>
+    <div class="social-row">
+      <button class="btn-social">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Google
+      </button>
+      <button class="btn-social">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/>
+        </svg>
+        GitHub
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ── CREATE ACCOUNT PANEL ── -->
+  <div class="card-body" id="panel-register" style="display:none">
+
+    <div class="field">
+      <label for="reg-fullname">Full name</label>
+      <input id="reg-fullname" type="text" placeholder="Ada Lovelace" autocomplete="name">
+    </div>
+
+    <div class="field">
+      <label for="reg-email">Email</label>
+      <input id="reg-email" type="email" placeholder="you@example.com" autocomplete="email">
+    </div>
+
+    <div class="field">
+      <label for="reg-username">Username</label>
+      <input id="reg-username" type="text" placeholder="@yourusername" autocomplete="off">
+    </div>
+
+    <div class="field">
+      <label for="reg-password">Password</label>
+      <input id="reg-password" type="password" placeholder="Min 8 characters" autocomplete="new-password">
+    </div>
+
+    <button class="btn-primary" id="register-btn" onclick="register()">Create account</button>
+    <div id="register-message"></div>
+
+    <div class="divider">Or sign up with</div>
+    <div class="social-row">
+      <button class="btn-social">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Google
+      </button>
+      <button class="btn-social">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/>
+        </svg>
+        GitHub
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
