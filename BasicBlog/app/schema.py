@@ -5,14 +5,14 @@ from datetime import datetime
 class PostBase(BaseModel):
     author: str = Field(..., example="Jane Doe")
     title: str = Field(..., example="Python is Great for Web Development")
-    content: str = Field(..., example="Python is a great language for web development, and FastAPI makes it even better.", min_length=1, max_length=500)
+    content: str = Field(..., example="Python is a great language for web development, and FastAPI makes it even better.", min_length=1, max_length=1000)
 
 class PostCreate(PostBase):
     pass
 
 class PostResponse(PostBase):
     id: int
-    date_posted: datetime
+    date_posted: str
 
     model_config = ConfigDict(
         from_attributes=True,

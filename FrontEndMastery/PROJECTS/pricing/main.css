@@ -1,0 +1,159 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter' sans-serif;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pricing-section {
+    max-width: 1000px;
+    margin: 4rem auto;
+    padding: 0 1rem;
+    background-color: rgb(239, 235, 235);
+    height: 70vh;
+    padding: 3rem 3rem;
+}
+
+.pricing-title {
+    font-size: 25px;
+    font-weight: 500;
+    color: #111;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.pricing-sub {
+    font-size: 19px;
+    color: gray;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.cards-area {
+    display: flex;
+    /* justify-content: center;
+    align-items: center;
+    flex-direction: row; */
+    gap: 20px;
+}
+
+.card {
+    padding: 1.5rem 1.5rem;
+    background-color: white;
+    border: #d3d2d2 2px solid;
+    border-radius: 10px;
+    /* height: 400px; */
+    width: 260px; 
+    flex: 1;
+}
+
+.plan-name {
+    font-size: 20px;
+    font-weight: 400px;
+    color: rgb(48, 47, 47);
+    margin-bottom: 1rem;
+}
+
+.price {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #111;
+    padding-bottom: 0.5rem;
+}
+
+.period {
+    font-size: 18px;
+    font-weight: 100;
+    color: gray;
+}
+
+.badge {
+    background-color: #EEEDFE;
+    color: #3c3489;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 25px;
+    border-radius: 999px;
+    border: 0.5px solid #afa9ec;
+    left: 50%;
+    position: absolute;
+    top: -14px;
+    transform: translateX(-50%);
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid #eeeeee;
+    width: 100%;
+    margin: 8px 0;
+}
+
+.featured {
+    position: relative;
+    border: 2px solid #534ab7;
+}
+
+.features {
+    list-style: none;
+    font-size: 17px;
+}
+
+li {
+    padding: 0.3rem;
+    color: gray;
+}
+
+.btn {
+    color: rgb(42, 42, 42);
+    border: 2px solid #d4d2d2;
+    background-color: white;
+    font-size: 17px;
+    padding: 0.7rem;
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.fa-check {
+    color: green;
+}
+
+.fa-times {
+    color: gray;
+}
+
+.btn-primary {
+    background-color: #534AB7;
+    color: #ffffff;
+    border-color: 2px solid #534AB7;
+}
+
+.btn:hover {
+    background-color: #f5f5f5;
+    border-color: #999999;
+}
+
+.btn:active {
+    transform: scale(0.97);
+}
+
+.btn-primary:hover {
+    background-color: #3C3489;
+    border-color: #3C3489;
+}
+
+.btn-primary:active {
+    transform: scale(0.97);
+}
+
+

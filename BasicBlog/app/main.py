@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse # To return JSON responses for errors
 from .schema import PostCreate, PostResponse
 from typing import List
 from datetime import timezone, datetime
+from .utils import format_date
 
 app = FastAPI()
 
@@ -68,7 +69,7 @@ def create_post(post: PostCreate):
 
     new_post["id"] = max([p["id"] for p in posts], default=0) + 1
 
-    new_post["date_posted"] = datetime.now(timezone.utc)
+    new_post["date_posted"] = format_date(datetime.now(timezone.utc))
 
     posts.append(new_post)
 
