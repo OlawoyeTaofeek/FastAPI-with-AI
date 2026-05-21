@@ -1,7 +1,7 @@
 from __future__ import annotations
 from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from database import Base
+from .database import Base
 from datetime import datetime, UTC
 
 
@@ -13,7 +13,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(200), unique=True, nullable=False)
     full_name: Mapped[str] = mapped_column(String(150), nullable=False)  # ← fixed
     image_file: Mapped[str | None] = mapped_column(String(200), nullable=True, default=None)
-    hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
+    password: Mapped[str] = mapped_column(String(255), nullable=False)
     posts: Mapped[list[Post]] = relationship(back_populates="author")
 
     @property
@@ -23,7 +23,7 @@ class User(Base):
         return "/static/profile_pics/default.jpg"
 
     def __repr__(self) -> str:
-        return f"<User {self.email}>"
+        return f"{self.username}"
 
 
 class Post(Base):

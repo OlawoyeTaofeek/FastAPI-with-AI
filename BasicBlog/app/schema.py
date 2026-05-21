@@ -11,6 +11,10 @@ class UserBase(BaseModel):
     full_name: str      = Field(min_length=2, max_length=150)
 
 class UserCreate(UserBase):
+    username: str = Field(min_length=1, max_length=50)
+    email: EmailStr = Field(max_length=120)
+
+class UserCreate(UserBase):
     password: str = Field(min_length=8)
 
     @field_validator("password")
@@ -33,12 +37,22 @@ class UserResponse(UserBase):
 
     model_config = ConfigDict(from_attributes=True)
 
+class UserUpdate(BaseModel):
+    username: str | None = Field(default=None, min_length=1, max_length=50)
+    email: EmailStr | None = Field(default=None, max_length=120)
+    image_file: str | None = Field(default=None, min_length=1, max_length=200)
+
 
 # ─── Post Schemas ─────────────────────────────────────────────────────────────
 
 class PostCreate(BaseModel):
     title:   str = Field(..., min_length=1, max_length=100)
     content: str = Field(..., min_length=1)
+    user_id: int = Field(..., description="ID of the user creating the post")
+
+class PostUpdate(BaseModel):
+    title: str | None = Field(default=None, min_length=1, max_length=100)
+    content: str | None = Field(default=None, min_length=1)
 
 class PostResponse(BaseModel):
     id:          int
@@ -50,3 +64,7 @@ class PostResponse(BaseModel):
     author:      UserResponse 
 
     model_config = ConfigDict(from_attributes=True)
+
+class PostUpdate(BaseModel):
+    title: str | None = Field(default=None, min_length=1, max_length=100)
+    content: str | None = Field(default=None, min_length=1)
