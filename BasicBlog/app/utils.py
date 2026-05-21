@@ -1,9 +1,18 @@
 from datetime import datetime
 from pydantic import BaseModel, Field
-
+from passlib.context import CryptContext
 
 class DataInput(BaseModel):
     date: datetime = Field(..., example="2021-01-03T12:00:00Z")
 
 def format_date(date: DataInput) -> str:
     return date.strftime("%B %d, %Y")
+
+
+pwd_context = CryptContext(schemes=['bcrypt'], deprecated="auto")
+
+def hash_password(password: str):
+    return pwd_context.hash(password)
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)

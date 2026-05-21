@@ -1,28 +1,52 @@
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, EmailStr, field_validator
 from datetime import datetime
+import re
 
 
-class PostBase(BaseModel):
-    author: str = Field(..., example="Jane Doe")
-    title: str = Field(..., example="Python is Great for Web Development")
-    content: str = Field(..., example="Python is a great language for web development, and FastAPI makes it even better.", min_length=1, max_length=1000)
+# ─── User Schemas ─────────────────────────────────────────────────────────────
 
-class PostCreate(PostBase):
-    pass
+class UserBase(BaseModel):
+    username:  str      = Field(min_length=1, max_length=50)
+    email:     EmailStr = Field(max_length=200)
+    full_name: str      = Field(min_length=2, max_length=150)
 
-class PostResponse(PostBase):
-    id: int
-    date_posted: str
+class UserCreate(UserBase):
+    password: str = Field(min_length=8)
 
-    model_config = ConfigDict(
-        from_attributes=True,
-        json_schema_extra={
-            "example": {
-                "id": 1,
-                "author": "Jane Doe",
-                "title": "Python is Great for Web Development",
-                "content": "Python is a great language for web development, and FastAPI makes it even better.",
-                "date_posted": "2021-01-03"
-            }
-        }
-    )
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, value: str) -> str:
+        if not re.search(r"[A-Z]", value):
+            raise ValueError("Must contain at least one uppercase letter")
+        if not re.search(r"[a-z]", value):
+            raise ValueError("Must contain at least one lowercase letter")
+        if not re.search(r"\d", value):
+            raise ValueError("Must contain at least one number")
+        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", value):
+            raise ValueError("Must contain at least one special character")
+        return value
+
+class UserResponse(UserBase):
+    id:         int
+    image_file: str | None
+    image_path: str          
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+# ─── Post Schemas ─────────────────────────────────────────────────────────────
+
+class PostCreate(BaseModel):
+    title:   str = Field(..., min_length=1, max_length=100)
+    content: str = Field(..., min_length=1)
+
+class PostResponse(BaseModel):
+    id:          int
+    title:       str
+    content:     str
+    date_posted: datetime 
+    user_id:     int  
+    updated_at:  datetime
+    author:      UserResponse 
+
+    model_config = ConfigDict(from_attributes=True)

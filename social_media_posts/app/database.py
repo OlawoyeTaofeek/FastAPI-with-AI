@@ -22,3 +22,7 @@ def get_db():
         yield db 
     finally:
         db.close()
+
+# def get_db():
+#     with sessionLocal() as db:
+#         yield db  Context manager approach
