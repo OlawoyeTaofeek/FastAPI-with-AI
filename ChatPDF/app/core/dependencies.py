@@ -1,4 +1,6 @@
+# app/core/dependencies.py
 from passlib.context import CryptContext
+from sentence_transformers import SentenceTransformer
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated="auto")
 

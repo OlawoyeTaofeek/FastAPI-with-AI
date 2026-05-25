@@ -16,13 +16,17 @@ from .database import Base, get_db, engine
 from typing import Annotated 
 from .schema import (PostCreate, PostResponse, UserCreate, 
     UserResponse, PostUpdate, PostUpdate, UserUpdate)
+import os
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/media", StaticFiles(directory="media"), name="media")
+
+# Only mount /media if the directory exists
+if os.path.isdir("media"):
+    app.mount("/media", StaticFiles(directory="media"), name="media")
 
 templates = Jinja2Templates(directory="templates")
 templates.env.filters["format_date"] = format_date
@@ -154,12 +158,12 @@ def get_user_posts(user_id: int, db : Annotated[Session, Depends(get_db)]):
 @app.get("/api/posts", response_model=list[PostResponse])
 def get_posts(
     db: Annotated[Session, Depends(get_db)],
-    skip: int = 0,       # how many to skip (for pagination)
-    limit: int = 10      # how many to return
+    skip: int = 0,      
+    limit: int = 10      
 ):
     posts = db.execute(
         select(models.Post)
-        .order_by(models.Post.date_posted.desc())  # newest first
+        .order_by(models.Post.date_posted.desc())  
         .offset(skip)
         .limit(limit)
     ).scalars().all()

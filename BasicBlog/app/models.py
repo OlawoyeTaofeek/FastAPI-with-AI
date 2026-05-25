@@ -1,7 +1,7 @@
 from __future__ import annotations
 from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from .database import Base
+from .async_database import Base
 from datetime import datetime, UTC
 
 
@@ -14,7 +14,7 @@ class User(Base):
     full_name: Mapped[str] = mapped_column(String(150), nullable=False)  # ← fixed
     image_file: Mapped[str | None] = mapped_column(String(200), nullable=True, default=None)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
-    posts: Mapped[list[Post]] = relationship(back_populates="author")
+    posts: Mapped[list[Post]] = relationship(back_populates="author", cascade="all, delete-orphan")
 
     @property
     def image_path(self) -> str:
